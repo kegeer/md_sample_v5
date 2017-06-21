@@ -1,0 +1,12 @@
+click==6.7
+Flask==0.12.2
+Flask-SQLAlchemy==2.2
+flask-swagger==0.2.13
+itsdangerous==0.24
+Jinja2==2.9.6
+MarkupSafe==1.0
+marshmallow==2.13.5
+marshmallow-sqlalchemy==0.13.1
+PyYAML==3.12
+SQLAlchemy==1.1.11
+Werkzeug==0.12.2
