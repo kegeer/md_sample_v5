@@ -6,13 +6,17 @@ from flask_swagger import swagger
 from api.utils.database import db
 from api.utils.response import response_with
 import api.utils.response as resp
-from api.api_v1 import api as api_blueprint
+from instance.config import app_config
+from flask_cors import CORS
 
-def create_app(config):
-    app = Flask(__name__)
+def create_app(config_name):
+    app = Flask(__name__, instance_relative_config=True)
+    CORS(app, supports_credentials=True)
+    app.config.from_object(app_config[config_name])
+    app.config.from_pyfile('config.py')
 
-    app.config.from_object(config)
-    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
+    db.init_app(app)
+
 
     @app.after_request
     def add_header(response):
@@ -40,11 +44,10 @@ def create_app(config):
         swag['info']['title'] = 'Flask Sample Api'
         return jsonify(swag)
 
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()
-
     logging.basicConfig(stream=sys.stdout,
                         format='%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s',
                         level=logging.DEBUG)
+    from api.api_v1 import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
+
     return app
