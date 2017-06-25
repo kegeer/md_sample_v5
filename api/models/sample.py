@@ -2,8 +2,9 @@ from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from .result import Result, ResultSchema
+from .crud import CRUD
 
-class Sample(db.Model):
+class Sample(db.Model, CRUD):
     __tablename__ = 'samples'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     batch_id = db.Column(db.Integer, db.ForeignKey('batches.id'))
@@ -42,11 +43,6 @@ class Sample(db.Model):
         self.remark = remark
         self.results = results
         # self.batches = batches
-
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
 
 class SampleSchema(ModelSchema):
     class Meta(ModelSchema.Meta):

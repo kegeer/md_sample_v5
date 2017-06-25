@@ -3,13 +3,14 @@ from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from .ref import Ref, RefSchema
 from .category import Category, CategorySchema
+from .crud import CRUD
 
 category_infos = db.Table('category_infos', db.metadata,
     db.Column('category_id', db.ForeignKey('categories.id')),
     db.Column('info_id', db.ForeignKey('infos.id'))
 )
 
-class Info(db.Model):
+class Info(db.Model, CRUD):
     __tablename__ = 'infos'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     c_name = db.Column(db.String(255), nullable=True)
@@ -42,19 +43,6 @@ class Info(db.Model):
         self.refs = refs
         self.categories = categories
 
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
-
-    def update(self):
-        db.session.update(self)
-        db.session.commit()
-        return self
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
 
 class InfoSchema(ModelSchema):
     class Meta(ModelSchema.Meta):

@@ -1,8 +1,9 @@
 from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
+from .crud import CRUD
 
-class Result(db.Model):
+class Result(db.Model, CRUD):
     __tablename__ = 'results'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # 报告产出日期
@@ -12,7 +13,7 @@ class Result(db.Model):
     status = db.Column(db.SmallInteger, default = 0)
     # 审核员: 按理说是角色为审核员的人
     auditor = db.Column(db.String(10), nullable=True)
-    auditor = db.Column(db.DateTime, nullable=True)
+    auditor_date = db.Column(db.DateTime, nullable=True)
     content = db.Column(db.JSON)
 
     def __init__(self, date, sample_id, status, auditor, content):
@@ -20,12 +21,8 @@ class Result(db.Model):
         self.sample_id = sample_id
         self.status = status
         self.auditor = auditor
+        self.auditor_date = auditor_date
         self.content = content
-
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
 
 class ResultSchema(ModelSchema):
     class Meta(ModelSchema.Meta):

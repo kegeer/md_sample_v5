@@ -1,8 +1,9 @@
 from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
+from .crud import CRUD
 
-class Position(db.Model):
+class Position(db.Model, CRUD):
     __tablename__ = 'positions'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     position = db.Column(db.String(100))
@@ -11,11 +12,6 @@ class Position(db.Model):
     def __init__(self, position, tempr):
         self.position = position
         self.tempr = tempr
-
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
 
 
 class PositionSchema(ModelSchema):

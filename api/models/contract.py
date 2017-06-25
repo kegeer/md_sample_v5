@@ -1,8 +1,9 @@
 from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
+from .crud import CRUD
 
-class Contract(db.Model):
+class Contract(db.Model, CRUD):
     __tablename__ = 'contracts'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     subproject_id = db.Column(db.Integer, db.ForeignKey('subprojects.id'))
@@ -31,12 +32,6 @@ class Contract(db.Model):
         self.sequence_area = sequence_area
         self.sequence_type = sequence_type
         self.data_size = data_size
-
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
-
 
 class ContractSchema(ModelSchema):
     class Meta(ModelSchema.Meta):

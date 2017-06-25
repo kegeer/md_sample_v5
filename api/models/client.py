@@ -2,8 +2,9 @@ from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from .sample import Sample, SampleSchema
+from .crud import CRUD
 
-class Client(db.Model):
+class Client(db.Model, CRUD):
     __tablename__ = 'clients'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20))
@@ -29,10 +30,6 @@ class Client(db.Model):
         self.extra = extra
         self.samples = samples
 
-    def create(self):
-        db.session.add(self)
-        db.session.commit()
-        return self
 
 class ClientSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
