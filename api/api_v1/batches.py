@@ -4,27 +4,37 @@ from api.models.batch import Batch, BatchSchema
 from api.utils.response import response_with
 import api.utils.response as resp
 
+@api.route('/batches', methods=['POST'])
+def add_batch():
+    fetched = request.get_json(force=True)
+    batch_schema = BatchSchema()
+    batch, error = batch_schema.load(fetched)
+    return str(type(batch))
+    data = batch_schema.dump(batch.create()).data
+    return response_with(resp.SUCCESS_200, value={
+        "data": data
+    })
+
+    # try:
+    #     fetched = request.get_json()
+    #     batch_schema = BatchSchema()
+    #     agency, error = batch_schema.load(fetched)
+    #     data = batch_schema.dump(agency.create()).data
+    #     return response_with(resp.SUCCESS_200, value={
+    #         "data": data
+    #     })
+    # except:
+    #     return response_with(resp.INVALID_INPUT_422)
+
 @api.route('/batches', methods=['GET'])
 def get_batches():
     resource = Batch.query.all()
     batch_schema = BatchSchema(many=True, exclude=('agency_id', 'contact_id', 'store_time', 'position_id', 'subproject_id', 'roadmap_id', 'remark', 'samples'))
+    # return type(batch_schema)
     data = batch_schema.dump(resource).data
     return response_with(resp.SUCCESS_200, value={
         'data': data
     })
-
-@api.route('/batches', methods=['POST'])
-def add_batch():
-    try:
-        fetched = request.get_json()
-        batch_schema = BatchSchema()
-        batch, error = batch_schema.load(fetched)
-        data = batch_schema.dump(batch.create()).data
-        return response_with(resp.SUCCESS_200, value={
-            'data': data
-        })
-    except:
-        return response_with(resp.INVALID_INPUT_422)
 
 @api.route('/batches/<int:id>', methods=['PUT'])
 def update_batch(id):

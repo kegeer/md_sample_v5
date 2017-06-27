@@ -1,7 +1,6 @@
 from flask import request
 from . import api
 from api.models.agency import Agency, AgencySchema
-from api.models.contact import Contact, ContactSchema
 from api.utils.response import response_with
 import api.utils.response as resp
 import json
@@ -19,6 +18,7 @@ def create_agency():
         fetched = request.get_json()
         agency_schema = AgencySchema()
         agency, error = agency_schema.load(fetched)
+        return str(type(agency))
         data = agency_schema.dump(agency.create()).data
         return response_with(resp.SUCCESS_200, value={
             "data": data
@@ -34,7 +34,8 @@ def get_agency_detail(id):
     return response_with(resp.SUCCESS_200, value={
         "data": data
     })
-#
+
+
 @api.route('/agencies/<int:id>', methods=['PUT'])
 def update_agency(id):
     fetched = request.get_json(force=True)

@@ -11,7 +11,7 @@ class SequenceSize(db.Model, CRUD):
     def __init__(self, name):
         self.name = name
 
-class SequencerSchema(ModelSchema):
+class SequenceSizeSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = SequenceSize
         sqla_session = db.session

@@ -6,8 +6,8 @@ from .category import Category, CategorySchema
 from .crud import CRUD
 
 category_infos = db.Table('category_infos', db.metadata,
-    db.Column('category_id', db.ForeignKey('categories.id')),
-    db.Column('info_id', db.ForeignKey('infos.id'))
+    db.Column('category_id', db.Integer, db.ForeignKey('categories.id')),
+    db.Column('info_id', db.Integer, db.ForeignKey('infos.id'))
 )
 
 class Info(db.Model, CRUD):
@@ -16,7 +16,6 @@ class Info(db.Model, CRUD):
     c_name = db.Column(db.String(255), nullable=True)
     e_name = db.Column(db.String(255), nullable=True)
     # TODO 类型信息,暂时还不确定是否和category有区别
-    type = db.Column(db.SmallInteger, nullable=True)
     desc = db.Column(db.String(255), nullable=True)
     ref_min = db.Column(db.Float, nullable=True)
     ref_max = db.Column(db.Float, nullable=True)
@@ -32,10 +31,9 @@ class Info(db.Model, CRUD):
         backref='infos'
     )
 
-    def __init__(self, c_name, e_name, type, desc, ref_min, ref_max, alias, refs=[], categories=[]):
+    def __init__(self, c_name, e_name, desc, ref_min, ref_max, alias, refs=[], categories=[]):
         self.c_name = c_name
         self.e_name = e_name
-        self.type = type
         self.desc = desc
         self.ref_min = ref_min
         self.ref_max = ref_max
@@ -51,7 +49,6 @@ class InfoSchema(ModelSchema):
     id = fields.Number(dump_only=True)
     c_name = fields.String(required=True)
     e_name = fields.String(required=True)
-    type = fields.Integer(required=True)
     desc = fields.String(required=True)
     ref_min = fields.String(required=True)
     ref_max = fields.String(required=True)

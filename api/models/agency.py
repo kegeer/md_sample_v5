@@ -34,7 +34,7 @@ class AgencySchema(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = Agency
         sqla_session = db.session
-    id = fields.Number(dump_only=True)
+    id = fields.Integer(dump_only=True)
     name = fields.String(required=True)
     address = fields.String(required=True)
     contacts = fields.Nested(ContactSchema, many=True)

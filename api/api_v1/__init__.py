@@ -2,4 +2,4 @@ from flask import Blueprint
 
 api = Blueprint('api', __name__)
 
-from . import batches, contacts, agencies, clients, samples, projects, roadmaps, positions
+from . import batches, contacts, categories, agencies, clients, samples, projects, subprojects, roadmaps, positions, infos, refs, results, roadmaps, samples, sequencers, sequenceAreas, sequenceSizes, sequenceTypes, libraries, auth, users, roles, contracts

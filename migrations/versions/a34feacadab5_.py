@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 163ee2a423dc
+Revision ID: a34feacadab5
 Revises: 
-Create Date: 2017-06-22 16:37:57.350579
+Create Date: 2017-06-26 16:07:41.561128
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '163ee2a423dc'
+revision = 'a34feacadab5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -43,7 +43,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('c_name', sa.String(length=255), nullable=True),
     sa.Column('e_name', sa.String(length=255), nullable=True),
-    sa.Column('type', sa.SmallInteger(), nullable=True),
     sa.Column('desc', sa.String(length=255), nullable=True),
     sa.Column('ref_min', sa.Float(), nullable=True),
     sa.Column('ref_max', sa.Float(), nullable=True),
@@ -61,15 +60,56 @@ def upgrade():
     sa.Column('tempr', sa.String(length=100), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('primers',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('projects',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=True),
+    sa.Column('description', sa.String(length=500), nullable=True),
+    sa.Column('manager', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('roadmaps',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('roles',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.Column('slug', sa.String(length=20), nullable=True),
+    sa.Column('description', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('sequence_areas',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('sequence_sizes',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('sequence_types',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('sequencers',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('users',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('email', sa.String(length=256), nullable=True),
+    sa.Column('password', sa.String(length=256), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('password')
     )
     op.create_table('category_infos',
     sa.Column('category_id', sa.Integer(), nullable=True),
@@ -95,6 +135,12 @@ def upgrade():
     sa.Column('desc', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['info_id'], ['infos.id'], ),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('role_users',
+    sa.Column('role_id', sa.Integer(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], )
     )
     op.create_table('subprojects',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -167,7 +213,8 @@ def upgrade():
     sa.Column('date', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.Column('sample_id', sa.Integer(), nullable=True),
     sa.Column('status', sa.SmallInteger(), nullable=True),
-    sa.Column('auditor', sa.DateTime(), nullable=True),
+    sa.Column('auditor', sa.String(length=10), nullable=True),
+    sa.Column('auditor_date', sa.DateTime(), nullable=True),
     sa.Column('content', sa.JSON(), nullable=True),
     sa.ForeignKeyConstraint(['sample_id'], ['samples.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -182,11 +229,19 @@ def downgrade():
     op.drop_table('contracts')
     op.drop_table('batches')
     op.drop_table('subprojects')
+    op.drop_table('role_users')
     op.drop_table('refs')
     op.drop_table('contacts')
     op.drop_table('category_infos')
+    op.drop_table('users')
+    op.drop_table('sequencers')
+    op.drop_table('sequence_types')
+    op.drop_table('sequence_sizes')
+    op.drop_table('sequence_areas')
+    op.drop_table('roles')
     op.drop_table('roadmaps')
     op.drop_table('projects')
+    op.drop_table('primers')
     op.drop_table('positions')
     op.drop_table('libraries')
     op.drop_table('infos')

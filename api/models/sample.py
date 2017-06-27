@@ -1,6 +1,6 @@
 from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
-from marshmallow import fields
+from marshmallow import fields, post_load
 from .result import Result, ResultSchema
 from .crud import CRUD
 
@@ -12,7 +12,7 @@ class Sample(db.Model, CRUD):
     pmid = db.Column(db.String(20))
     ori_num = db.Column(db.String(20))
     # 与下面的amount配合,标识是重量还是体积
-    type = db.Column(db.SmallInteger, nullable=True)
+    amount_type = db.Column(db.SmallInteger, nullable=True)
     # 样品量,体积或重量(ml/g)
     amount = db.Column(db.Float, nullable=True)
     # 测序类型
@@ -29,12 +29,12 @@ class Sample(db.Model, CRUD):
         lazy='dynamic'
     )
 
-    def __init__(self, batch_id, client_id, pmid, ori_num, type, amount, sequence_method, primer, sequencer, library_id, remark, results=[]):
+    def __init__(self, batch_id, client_id, pmid, ori_num, amount_type, amount, sequence_method, primer, sequencer, library_id, remark, results=[]):
         self.batch_id = batch_id
         self.client_id = client_id
         self.pmid = pmid
         self.ori_num = ori_num
-        self.type = type
+        self.amount_type = amount_type
         self.amount = amount
         self.sequence_method = sequence_method
         self.primer = primer
@@ -48,12 +48,12 @@ class SampleSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = Sample
         sqla_session = db.session
-    id = fields.Number(dump_only=True)
+    id = fields.Integer(dump_only=True)
     batch_id = fields.String(required=True)
     client_id = fields.Integer()
     pmid = fields.String(required=True)
     ori_num = fields.String(required=True)
-    type = fields.Integer(required=True)
+    amount_type = fields.Integer(required=True)
     amount = fields.Float(required=True)
     sequence_method = fields.String(required=True)
     primer = fields.Integer()
@@ -61,3 +61,7 @@ class SampleSchema(ModelSchema):
     library_id = fields.Integer()
     remark = fields.String()
     results = fields.Nested(ResultSchema, many=True)
+
+    @post_load
+    def make_batch(self, data):
+        return Batch(**data)

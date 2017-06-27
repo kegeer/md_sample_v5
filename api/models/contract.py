@@ -37,7 +37,7 @@ class ContractSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = Contract
         sqla_session = db.session
-    id = fields.Number(dump_only=True)
+    id = fields.Integer(dump_only=True)
     subproject_id = fields.Integer()
     name = fields.String(required=True)
     sign_date = fields.DateTime(required=True)

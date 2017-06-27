@@ -15,5 +15,5 @@ class CategorySchema(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = Category
         sqla_session = db.session
-    id = fields.Number(dump_only=True)
+    id = fields.Integer(dump_only=True)
     name = fields.String(required=True)

@@ -5,7 +5,7 @@ from api.utils.response import response_with
 import api.utils.response as resp
 
 @api.route('/batches/<int:batch_id>/samples', methods=['GET'])
-def get_agency_samples():
+def get_agency_samples(batch_id):
     resource = Sample.query.filter_by(batch_id=batch_id)
     sample_schema = SampleSchema(many=True, exclude=('pmid', 'ori_num', 'type', 'amount'))
     data = sample_schema.dump(resource).data
@@ -24,8 +24,19 @@ def get_samples():
 
 @api.route('/samples', methods=['POST'])
 def add_sample():
+    fetched = request.get_json()
+    # import json
+    # return json.dumps(fetched)
+    sample_schema = SampleSchema()
+    sample, error = sample_schema.load(fetched)
+    data = sample_schema.dump(sample.create()).data
+    return response_with(resp.SUCCESS_200, value={
+        'data': data
+    })
     try:
         fetched = request.get_json()
+        import json
+        return josn.dumps(fetched)
         sample_schema = SampleSchema()
         sample, error = sample_schema.load(fetched)
         data = sample_schema.dump(sample.create()).data
